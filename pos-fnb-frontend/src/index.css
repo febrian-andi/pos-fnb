@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #invoice-content,
+  #invoice-content * {
+    visibility: visible;
+  }
+}
