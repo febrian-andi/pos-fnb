@@ -5,7 +5,7 @@ import { formatCurrency } from "../utils/formatCurrency";
 
 function ProductList() {
   const { data: products, loading, error } = useFetchData("/products");
-
+  
   if (loading) {
     return (
       <div className="flex space-x-2 justify-center py-10">

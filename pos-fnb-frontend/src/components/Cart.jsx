@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { usePostData } from "../hooks/usePostData";
 import { formatCurrency } from "../utils/formatCurrency";
 import { toast } from 'react-toastify';
@@ -40,6 +41,12 @@ function Cart() {
     }
   };
 
+  const handleDelete = (id) => {
+    const newCartItems = cartItems.filter((item) => item.id !== id);
+    setCartItems(newCartItems);
+    localStorage.setItem("productInCart", JSON.stringify(newCartItems));
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h2 className="text-2xl font-semibold mb-4">Products Cart</h2>
@@ -63,9 +70,19 @@ function Cart() {
                   <p className="text-gray-600">Price: {item.price}</p>
                   <p className="text-gray-600">Quantity: {item.quantity}</p>
                 </div>
-                <p className="text-lg font-medium">
-                  {formatCurrency(item.price * item.quantity)}
-                </p>
+                <div className="space-y-4">
+                  <p className="text-lg font-medium text-right">
+                    {formatCurrency(item.price * item.quantity)}
+                  </p>
+                  <div className="flex space-x-2">
+                    <Link to={`/product/${item.id}`} className="border-yellow-500 text-yellow-500 border-2 py-1 px-2 rounded-lg hover:bg-yellow-500 hover:text-white">
+                      Edit
+                    </Link>
+                    <button onClick={() => handleDelete(item.id)} className="border-red-500 text-red-500 border-2 py-1 px-2 rounded-lg hover:bg-red-500 hover:text-white">
+                      Delete
+                    </button>
+                  </div>
+                </div>
               </li>
             ))}
           </ul>

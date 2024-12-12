@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useFetchData } from "../hooks/useFetchData";
 import { formatCurrency } from "../utils/formatCurrency";
 import { toast } from 'react-toastify';
 
 function ProductDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data: product, loading, error } = useFetchData(`/products/${id}`);
 
   const [quantity, setQuantity] = useState(1);
@@ -66,9 +67,9 @@ function ProductDetails() {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden md:flex">
       <div className="relative">
-        <Link to="/" className="absolute p-3 font-bold text-white bg-red-500 hover:bg-red-700 rounded-br-lg">
+        <button onClick={() => navigate(-1)} className="absolute p-3 font-bold text-white bg-red-500 hover:bg-red-700 rounded-br-lg">
           Back
-        </Link>
+        </button>
         <img
           src={product.image_url}
           alt={product.name}
