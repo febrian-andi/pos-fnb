@@ -1,100 +1,83 @@
 const express = require("express");
-const dotenv = require("dotenv");
 const cors = require("cors");
-const { createClient } = require("@supabase/supabase-js");
+const sql = require("./connection");
 
-dotenv.config();
 const app = express();
 const port = 3000;
 
 app.use(cors());
 app.use(express.json());
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
-);
-
-(async () => {
-  const { error } = await supabase.from("products").select("*").limit(1);
-  if (error) {
-    console.error("Failed to connect to the database:", error.message);
-  } else {
-    console.log("Connected to the database successfully.");
-  }
-})();
-
 // Get all products
 app.get("/api/products", async (req, res) => {
-  const { data, error } = await supabase.from("products").select("*");
-
-  if (error) {
+  try {
+    const data = await sql`SELECT * FROM products`;
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching products:", error.message);
     res.status(500).json({ error: "Error fetching products" });
-    return;
   }
-  res.json(data);
 });
 
 // Get a single product by ID
 app.get("/api/products/:id", async (req, res) => {
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .eq("id", req.params.id)
-    .single();
-
-  if (error) {
+  try {
+    const data = await sql`SELECT * FROM products WHERE id = ${req.params.id}`;
+    if (data.length === 0) {
+      res.status(404).json({ error: "Product not found" });
+      return;
+    }
+    res.json(data[0]);
+  } catch (error) {
+    console.error("Error fetching product:", error.message);
     res.status(500).json({ error: "Error fetching product" });
-    return;
   }
-  res.json(data);
 });
 
 // Create a new order
 app.post("/api/orders", async (req, res) => {
   const { orderer_name, items } = req.body;
 
-  const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  try {
+    const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const { data, error } = await supabase
-    .from("orders")
-    .insert({ orderer_name, items: JSON.stringify(items), total })
-    .select();
+    const [newOrder] = await sql`
+      INSERT INTO orders (orderer_name, items, total)
+      VALUES (${orderer_name}, ${JSON.stringify(items)}, ${total})
+      RETURNING *
+    `;
 
-  if (error) {
+    res.json(newOrder);
+  } catch (error) {
+    console.error("Error creating order:", error.message);
     res.status(500).json({ error: "Error creating order" });
-    return;
   }
-  res.json(data[0]);
 });
 
 // Get all orders
 app.get("/api/orders", async (req, res) => {
-  const { data, error } = await supabase
-    .from("orders")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
+  try {
+    const data = await sql`SELECT * FROM orders ORDER BY created_at DESC`; 
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching orders:", error.message);
     res.status(500).json({ error: "Error fetching orders" });
-    return;
   }
-  res.json(data);
 });
 
 // Get a single order by ID
 app.get("/api/orders/:id", async (req, res) => {
-  const { data, error } = await supabase
-    .from("orders")
-    .select("*")
-    .eq("id", req.params.id)
-    .single();
-
-  if (error) {
-    res.status(500).json({ error: "Error fetching orders" });
-    return;
+  try {
+    const data = await sql`SELECT * FROM orders WHERE id = ${req.params.id}`;
+    if (data.length === 0) {
+      res.status(404).json({ error: "Order not found" });
+      return;
+    }
+    res.json(data[0]);
+  } catch (error) {
+    console.error("Error fetching order:", error.message);
+    res.status(500).json({ error: "Error fetching order" });
   }
-  res.json(data);
 });
 
 app.listen(port, () => {
