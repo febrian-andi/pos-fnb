@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useFetchData } from "../hooks/useFetchData";
 import { formatCurrency } from "../utils/formatCurrency";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 function ProductDetails() {
   const { id } = useParams();
@@ -43,7 +43,7 @@ function ProductDetails() {
     }
     localStorage.setItem("productInCart", JSON.stringify(cart));
     toast.success("Product added to cart!", {
-      position: "top-center"
+      position: "top-center",
     });
   };
 
@@ -67,7 +67,10 @@ function ProductDetails() {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden md:flex">
       <div className="relative">
-        <button onClick={() => navigate(-1)} className="absolute p-3 font-bold text-white bg-red-500 hover:bg-red-700 rounded-br-lg">
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute p-3 font-bold text-white bg-red-500 hover:bg-red-700 rounded-br-lg"
+        >
           Back
         </button>
         <img
@@ -76,57 +79,59 @@ function ProductDetails() {
           className="w-full md:w-96 h-auto object-cover"
         />
       </div>
-      <div className="p-6 md:w-1/2">
+      <div className="p-6 md:w-1/2 mx-auto">
         <h2 className="text-3xl font-semibold mb-4">{product.name}</h2>
         <p className="text-gray-600 mb-4">{product.description}</p>
-        <p className="text-2xl font-bold mb-4">
-          {formatCurrency(product.price)}
-        </p>
-        <div className="my-4 flex flex-row items-center gap-x-4">
-          <button
-            onClick={decrementQuantity}
-            className="border-2 border-gray-500 rounded-lg p-1 hover:bg-sky-300 hover:border-sky-300"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="size-6"
+        <div className="flex flex-col items-center md:items-start">
+          <p className="text-2xl font-bold mb-4">
+            {formatCurrency(product.price)}
+          </p>
+          <div className="my-4 flex flex-row items-center gap-x-4">
+            <button
+              onClick={decrementQuantity}
+              className="border-2 border-gray-500 rounded-lg p-1 hover:bg-sky-300 hover:border-sky-300"
             >
-              <path
-                fillRule="evenodd"
-                d="M4.25 12a.75.75 0 0 1 .75-.75h14a.75.75 0 0 1 0 1.5H5a.75.75 0 0 1-.75-.75Z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-          <div>
-            <p className="font-semibold text-xl">{quantity}</p>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="size-6"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M4.25 12a.75.75 0 0 1 .75-.75h14a.75.75 0 0 1 0 1.5H5a.75.75 0 0 1-.75-.75Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+            <div>
+              <p className="font-semibold text-xl">{quantity}</p>
+            </div>
+            <button
+              onClick={incrementQuantity}
+              className="border-2 border-gray-500 rounded-lg p-1 hover:bg-sky-300 hover:border-sky-300"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="size-6"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
           </div>
           <button
-            onClick={incrementQuantity}
-            className="border-2 border-gray-500 rounded-lg p-1 hover:bg-sky-300 hover:border-sky-300"
+            onClick={handleAddToCart}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="size-6"
-            >
-              <path
-                fillRule="evenodd"
-                d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z"
-                clipRule="evenodd"
-              />
-            </svg>
+            Add to Cart
           </button>
         </div>
-        <button
-          onClick={handleAddToCart}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-        >
-          Add to Cart
-        </button>
       </div>
     </div>
   );
